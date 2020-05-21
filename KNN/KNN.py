@@ -27,7 +27,7 @@ def load_data(data_path, split):
     selected_files = []
     for i in range(selected_file_num):
         selected_files.append(files[idx[i]]) #将随机的训练集个数个数据集加入selected_files
-    img_mat = np.empty((selected_file_num, 1, 28, 28), dtype="float32")
+    img_mat = np.empty((selected_file_num, 1 , 28, 28), dtype="float32")
     data = np.empty((selected_file_num, 28 * 28), dtype="float32")
     label = np.empty((selected_file_num), dtype="uint8")
 
@@ -72,13 +72,13 @@ def KNN(test_vec, train_data, train_label, k):
 
 if __name__ == "__main__":
     np.random.seed(123456)
-    train_data, train_label, test_data, test_label = load_data("mnist_data", 0.7)
+    train_data, train_label, test_data, test_label = load_data("d:/CodeStation/MachineLearning/KNN/mnist_data", 0.6)
     tot = test_data.shape[0]
     err = 0
     print("testing...")
     for i in range(tot):
         print(i, "/", tot, "\r",)
-        best_class = KNN(test_data[i], train_data, train_label, 3)
+        best_class = KNN(test_data[i], train_data, train_label, 2)
         if (best_class != test_label[i]):
             err = err + 1.0
     print("")
