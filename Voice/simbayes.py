@@ -9,7 +9,7 @@ from math import exp
 from math import sqrt
 from math import pi
 
-def load_data(file_name):
+def load_data(file_name,gen):
     """
     :param filename
     :return
@@ -46,17 +46,30 @@ def load_data(file_name):
         train_data, test_data, train_label, test_label= [], [], [], []
         lib_data_num = len(lib_data)
         idx = np.random.permutation(lib_data_num)
-        div_line = int(0.8 * lib_data_num)
+        div_line = int(0.7 * lib_data_num)
         train_idx, test_idx = idx[:div_line], idx[div_line:]
         for i in range(div_line): 
             train_data.append(lib_data[train_idx[i]])
             train_label.append(lib_label[train_idx[i]])
         sem = lib_data_num - div_line
         i = 0
-        while i < sem:
-            test_data.append(lib_data[test_idx[i]])
-            test_label.append(lib_label[test_idx[i]])
-            i += 1
+        if gen == 0:
+            while i < sem:
+                test_data.append(lib_data[test_idx[i]])
+                test_label.append(lib_label[test_idx[i]])
+                i += 1
+        elif gen == 1:
+            while i < sem:
+                if lib_label[test_idx[i]] == 1:
+                    test_data.append(lib_data[test_idx[i]])
+                    test_label.append(lib_label[test_idx[i]])
+                i += 1
+        elif gen == 2 :
+            while i < sem:
+                if lib_label[test_idx[i]] == 0:
+                    test_data.append(lib_data[test_idx[i]])
+                    test_label.append(lib_label[test_idx[i]])
+                i += 1
     return train_data, test_data, train_label, test_label
 
 
@@ -112,7 +125,8 @@ class GaussianNB:
         for i in range(self.n_class):
             atom = []
             for j in range(len(row)):
-                temp = (1 / sqrt(2 * pi * self.vars[i][j]) * exp(-(row[j] - self.avgs[i][j]) ** 2 / (2 * self.vars[i][j])))
+                temp = (1 / sqrt(2 * pi * self.vars[i][j]) * exp(-(row[j] -
+                self.avgs[i][j]) ** 2 / (2 * self.vars[i][j])))
                 atom.append(temp)
             result.append(atom)
         result = np.prod(result, 1)
@@ -151,10 +165,33 @@ class GaussianNB:
 
 if __name__ == "__main__":
     file_name = "voice.csv"
-    data_train, data_test, label_train, label_test = load_data(file_name)
+    print("When gender unexprcted:")
+    print("--------------------------------------------")
+    data_train, data_test, label_train, label_test = load_data(file_name, 0)
     clf = GaussianNB()
     clf.fit(data_train, label_train)
     label_pre = clf.predict(data_test)
     acc = clf._get_acc(label_test, label_pre)
     print("Accuracy is %.3f" % acc)
+    print("---------------------------------------------")
+
+    print("when focus on male:")
+    print("--------------------------------------------")
+    data_train, data_test, label_train, label_test = load_data(file_name, 1)
+    clf = GaussianNB()
+    clf.fit(data_train, label_train)
+    label_pre = clf.predict(data_test)
+    acc = clf._get_acc(label_test, label_pre)
+    print("Accuracy is %.3f" % acc)
+    print("---------------------------------------------")
+
+    print("when focus on female:")
+    print("--------------------------------------------")
+    data_train, data_test, label_train, label_test = load_data(file_name, 2)
+    clf = GaussianNB()
+    clf.fit(data_train, label_train)
+    label_pre = clf.predict(data_test)
+    acc = clf._get_acc(label_test, label_pre)
+    print("Accuracy is %.3f" % acc)
+    print("---------------------------------------------")
 
