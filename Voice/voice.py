@@ -1,6 +1,10 @@
+'''
+基于高斯朴素贝叶斯完成
+'''
 import numpy as np
 import csv
-from sklearn.naive_bayes import GaussianNB  #使用高斯朴素贝叶斯
+import matplotlib.pyplot as plt
+from sklearn.naive_bayes import GaussianNB 
 from sklearn.metrics import accuracy_score
 """
 基于贝叶斯公式完成男女声音的识别
@@ -43,7 +47,7 @@ def load_data(file_name, gen):
         train_data, test_data, train_label, test_label= [], [], [], []
         lib_data_num = len(lib_data)
         idx = np.random.permutation(lib_data_num)
-        div_line = int(0.7 * lib_data_num)
+        div_line = int(0.8 * lib_data_num)
         train_idx, test_idx = idx[:div_line], idx[div_line:]
         for i in range(div_line): 
             train_data.append(lib_data[train_idx[i]])
@@ -78,52 +82,50 @@ def calculate(train_data, test_data, label_train, label_test):
     result = accuracy_score(label_test, prediction)
     return result    
 
+def show(result1, result2, result3):
+    x = list(range(100))
+    plt.figure(figsize=(10, 5))
+    plt.plot(x, result1, label='Non_gen_acc')
+    plt.plot(x, result2, label='Male_acc')
+    plt.plot(x, result3, label='Female_acc')
+    plt.title('Voice Acc')
+    plt.xlabel(' ')
+    plt.ylabel('%')
+    plt.legend(fontsize=10)
+    plt.show()
 
 if __name__ == "__main__":
-
+    
     file_name = "voice.csv"
+    result1, result2, result3=[],[],[]
     print("When gender unexprcted:")
-    print("--------------------------------------------")
-    train_data, test_data, train_label, test_label = load_data(file_name, 0)
-    result1 = calculate(train_data, test_data, train_label, test_label)
-    print("The 1st result:[", result1, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 0)
-    result2 = calculate(train_data, test_data, train_label, test_label)
-    print("The 2nd result:[", result2, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 0)
-    result3 = calculate(train_data, test_data, train_label, test_label)
-    print("The 3rd result:[",result3,"]")
-    result = (result1+result2+result3)/3
-    print("The average:[",result,"]")
+
+    for i in range(100):
+        train_data, test_data, train_label, test_label = load_data(file_name, 0)
+        result1.append(calculate(train_data, test_data, train_label, test_label))
+    result1=np.array(result1)
+    result = result1.mean()
+    print("The average:[%.3f]" % result)
     print("---------------------------------------------")
 
     print("when focus on male:")
-    print("--------------------------------------------")
-    train_data, test_data, train_label, test_label = load_data(file_name, 1)
-    result1 = calculate(train_data, test_data, train_label, test_label)
-    print("The 1st result:[", result1, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 1)
-    result2 = calculate(train_data, test_data, train_label, test_label)
-    print("The 2nd result:[", result2, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 1)
-    result3 = calculate(train_data, test_data, train_label, test_label)
-    print("The 3rd result:[",result3,"]")
-    result = (result1+result2+result3)/3
-    print("The average:[",result,"]")
+
+    for i in range(100):
+        train_data, test_data, train_label, test_label = load_data(file_name, 1)
+        result2.append(calculate(train_data, test_data, train_label, test_label))
+    result2=np.array(result2)
+    result = result2.mean()
+    print("The average:[%.3f]" % result)
     print("---------------------------------------------")
 
     print("When focus on female:")
-    print("--------------------------------------------")
-    train_data, test_data, train_label, test_label = load_data(file_name, 2)
-    result1 = calculate(train_data, test_data, train_label, test_label)
-    print("The 1st result:[", result1, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 2)
-    result2 = calculate(train_data, test_data, train_label, test_label)
-    print("The 2nd result:[", result2, "]")
-    train_data, test_data, train_label, test_label = load_data(file_name, 2)
-    result3 = calculate(train_data, test_data, train_label, test_label)
-    print("The 3rd result:[",result3,"]")
-    result = (result1+result2+result3)/3
-    print("The average:[",result,"]")
+
+    for i in range(100):
+        train_data, test_data, train_label, test_label = load_data(file_name, 2)
+        result3.append(calculate(train_data, test_data, train_label, test_label))
+    result3=np.array(result3)
+    result = result3.mean()
+    print("The average:[%.3f]" % result)
     print("---------------------------------------------")
+    show(result1,result2,result3)
 
